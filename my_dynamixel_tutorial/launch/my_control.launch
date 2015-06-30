@@ -1,0 +1,28 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+   <node name="dynamixel_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+        <rosparam>
+            namespace: dxl_manager
+            serial_ports:
+                pan_tilt_port:
+                    port_name: "/dev/ttyACM0"
+                    baud_rate: 1000000
+                    min_motor_id: 0
+                    max_motor_id: 25
+                    update_rate: 20
+        </rosparam>
+    </node>
+    <rosparam file="$(find my_dynamixel_tutorial)/dual.yaml" command="load"/>
+    <node name="tilt_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+          args="--manager=dxl_manager
+                --port pan_tilt_port
+                tilt_controller
+		second_controller"
+          output="screen"/>
+
+    <node name="mouse_node" pkg="joy_mouse" type="mouse.py" />
+
+    <node name="my_mouse" pkg="my_dynamixel_tutorial" type="my_mouse_joy"/>
+
+    <node name="hand"  pkg="my_dynamixel_tutorial" type="hand_controller" output="screen" />
+</launch>

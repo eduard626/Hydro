@@ -1,0 +1,5 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+    <!-- Start mouse node -->
+    <node name="mouse" pkg="my_dynamixel_tutorial" type="mouse_listener" output="screen"/>
+</launch>
