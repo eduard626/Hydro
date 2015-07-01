@@ -12,15 +12,17 @@
                     update_rate: 20
         </rosparam>
     </node>
-    <rosparam file="$(find my_dynamixel_tutorial)/tilt.yaml" command="load"/>
+    <rosparam file="$(find my_dynamixel_tutorial)/dual.yaml" command="load"/>
     <node name="tilt_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
           args="--manager=dxl_manager
                 --port pan_tilt_port
                 tilt_controller
 		second_controller"
           output="screen"/>
-
-    <node name="mouse_node" pkg="joy_mouse" type="mouse.py" />
+    
+    <node name="mouse_node" pkg="joy_mouse" type="mouse.py"/>
+	  <param name ="dev" value="/dev/input/mouse1"/>
+    </node>
 
     <node name="my_mouse" pkg="my_dynamixel_tutorial" type="my_mouse_joy"/>
 
