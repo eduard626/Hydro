@@ -7,9 +7,11 @@
 #include <ros/ros.h>
 #include <cmath>
 #include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Int16.h>
 #include <std_msgs/Int8.h>
 #include <dynamixel_msgs/JointState.h>
-
+#include <rosbag/bag.h>
 
 class HandController
 {
@@ -18,22 +20,26 @@ public:
 	ros::Publisher position_pub_;
 	ros::Subscriber mouse_sub_;
 	ros::Subscriber servo_sub_;
+	rosbag::Bag bag;
 	bool close;
 	bool opening;
 	bool stop;
 	float hand_load;
 	float hand_pos;
 	bool confirm;
+	bool recently;
   HandController(){
 	  	position_pub_ = nh_.advertise <std_msgs::Float64>("/tilt_controller/command", 1);
 	  	mouse_sub_ = nh_.subscribe <std_msgs::Int8>("/hand", 10, &HandController::handCallback, this);
 	  	servo_sub_ = nh_.subscribe<dynamixel_msgs::JointState>("/tilt_controller/state",10,&HandController::handServo,this);
+	  	bag.open("handParameters.bag",rosbag::bagmode::Write);
 	  	close=false;
 	  	opening=false;
 	  	stop=false;
 	  	hand_load=0;
 	  	hand_pos=0;
 	  	confirm=false;
+	  	recently=false;
   }
 
   static float map(float x,float in_min,float in_max,float out_min,float out_max)
@@ -59,11 +65,20 @@ public:
   {
 	  close=confirm=opening=false;
 	  if(mouse->data==1)
+	  {
 		  close=true;
+		  recently=false;
+	  }
 	  if (mouse->data==3)
+	  {
 		  opening=true;
-	  if (mouse->data==2)
+		  recently=false;
+	  }
+	  if (mouse->data==2 && !recently)
+	  {
 		  confirm=true;
+		  recently=true;
+	  }
   }
   void handServo(const dynamixel_msgs::JointState::ConstPtr& data)
   {
@@ -80,25 +95,47 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "hand_control");
   HandController hand;
-
+  std_msgs::String str;
+  str.data=std::string("parameters");
+  std_msgs::Int16 max_v,min_v;
   ros::Rate loop_rate(50);
   std_msgs::Float64 msg_pos;
-  ROS_INFO("Loading position parameters from server ...");
-  ros::param::set("/tilt_controller/motor/max",1024);
-  ROS_INFO("ok max");
-  ros::param::set("/tilt_controller/motor/min",0);
-  ROS_INFO("ok min");
   	//Set motor to zero
   	float max_angle_deg=150;   //Ax-12 has a rotation about 300 degrees (150+/150-)
   	float max_angle=max_angle_deg*M_PI/180;
   	float zero=0.0;
+  	float min,max;
+  	int times=0;
   	float position,internal_counter=0.0;
+  	ros::Duration(2.0).sleep();
   	ROS_INFO("Min angle: %f Max angle: %f",-max_angle,max_angle);
   	ROS_INFO("Sending servo to %f",zero);
   	msg_pos.data=zero;
   	hand.positionSND(msg_pos,1);
   	while(ros::ok())
   	{
+  		if(hand.confirm==true)
+  		{
+			hand.confirm=false;
+  			if(times==1)
+  			{
+  				min=hand.hand_pos;
+  				min_v.data=(int)hand.map(min,-max_angle,max_angle,0.0,1023.0);
+  				max_v.data=(int)hand.map(max,-max_angle,max_angle,0.0,1023.0);
+  				ROS_INFO("Min: %d  Max: %d",min_v.data,max_v.data);
+  				hand.bag.write("some",ros::Time::now(),str);
+  				hand.bag.write("min_encoder",ros::Time::now(),min_v);
+  				hand.bag.write("max_encoder",ros::Time::now(),max_v);
+  				hand.bag.close();
+  				ROS_INFO("Saved");
+  			}
+  			else
+  			{
+  			  	max=hand.hand_pos;
+  			  	ROS_INFO("Max OK");
+  			  	times=1;
+  			}
+  		}
   		if(hand.close)
   		{
   			if(hand.stop)
@@ -111,21 +148,21 @@ int main(int argc, char** argv)
   		  		if (internal_counter>max_angle) internal_counter=max_angle;
   		  		if (internal_counter<-max_angle) internal_counter=-max_angle;
   		  		ROS_INFO("Load: %f",hand.hand_load);
-  		  		ROS_INFO("Position current: %f goal: %f",hand.hand_pos,internal_counter);
+  		  		ROS_INFO("Position current: %d goal: %f",(int)hand.map(hand.hand_pos,-max_angle,max_angle,0.0,1023.0),internal_counter);
  		  		msg_pos.data=internal_counter;
   		  		hand.positionSND(msg_pos,0.1);
   		  	}
   		}
   		if(hand.opening)
   		{
-//  			hand.opening=false;
-//  			hand.stop=false;
+  			hand.opening=false;
+  			hand.stop=false;
   			position=hand.hand_pos;
   			internal_counter=position-0.15;
   			if (internal_counter>max_angle) internal_counter=max_angle;
   			if (internal_counter<-max_angle) internal_counter=-max_angle;
   			ROS_INFO("Load: %f",hand.hand_load);
-  			ROS_INFO("Position current: %f goal: %f",hand.hand_pos,internal_counter);
+  			ROS_INFO("Position current: %d goal: %f",(int)hand.map(hand.hand_pos,-max_angle,max_angle,0.0,1024.0),internal_counter);
   			msg_pos.data=internal_counter;
   			hand.positionSND(msg_pos,0.1);
   		}

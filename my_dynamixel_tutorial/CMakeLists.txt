@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  rosbag
 )
 
 ## System dependencies are found with CMake's conventions
@@ -114,6 +115,9 @@ add_executable(my_mouse_joy src/mouse_teleop.cpp)
 target_link_libraries(my_mouse_joy ${catkin_LIBRARIES})
 add_executable(hand_controller src/hand_control.cpp)
 target_link_libraries(hand_controller ${catkin_LIBRARIES})
+add_executable(calibration src/calibration.cpp)
+target_link_libraries(calibration ${catkin_LIBRARIES})
+
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(my_dynamixel_tutorial_node my_dynamixel_tutorial_generate_messages_cpp)

@@ -132,9 +132,9 @@ int main(int argc, char** argv)
   		  	{
   		  		//position=hand.map(hand.hand_pos,0,1023,-max_angle,max_angle);
   		  		position=hand.hand_pos;
-  		  		internal_counter=position+0.1;
+  		  		internal_counter=position+0.2;
   		  		if (internal_counter>max_rad) internal_counter=max_rad;
-  		  			if (internal_counter<min_rad) internal_counter=min_rad;
+  		  		if (internal_counter<min_rad) internal_counter=min_rad;
   		  				ROS_INFO("Load: %f",hand.hand_load);
   		  				ROS_INFO("Position current: %f goal: %f",hand.hand_pos,internal_counter);
  		  				msg_pos.data=internal_counter;

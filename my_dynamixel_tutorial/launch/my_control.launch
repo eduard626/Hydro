@@ -19,10 +19,12 @@
                 tilt_controller
 		second_controller"
           output="screen"/>
-
-    <node name="mouse_node" pkg="joy_mouse" type="mouse.py" />
+    
+    <node name="mouse_node" pkg="joy_mouse" type="mouse.py">
+	  <param name ="dev" value="/dev/input/mouse1"/>
+    </node>
 
     <node name="my_mouse" pkg="my_dynamixel_tutorial" type="my_mouse_joy"/>
-
-    <node name="hand"  pkg="my_dynamixel_tutorial" type="hand_controller" output="screen" />
+<!--
+    <node name="hand"  pkg="my_dynamixel_tutorial" type="hand_controller" output="screen" /> -->
 </launch>
