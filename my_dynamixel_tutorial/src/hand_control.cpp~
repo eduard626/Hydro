@@ -65,6 +65,7 @@ public:
 
   void handCallback(const std_msgs::Int8::ConstPtr& mouse)
   {
+	  close=false;
 	  if(mouse->data==1)
 		  close=true;
 	  if (mouse->data==3)
@@ -129,10 +130,9 @@ int main(int argc, char** argv)
   				ROS_INFO("HIGH LOAD");
   		  	else
   		  	{
-  		  		hand.close=false;
   		  		//position=hand.map(hand.hand_pos,0,1023,-max_angle,max_angle);
   		  		position=hand.hand_pos;
-  		  		internal_counter=position+0.18;
+  		  		internal_counter=position+0.15;
   		  		if (internal_counter>max_rad) internal_counter=max_rad;
   		  		if (internal_counter<min_rad) internal_counter=min_rad;
   		  				ROS_INFO("Load: %f",hand.hand_load);
