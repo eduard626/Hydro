@@ -26,5 +26,5 @@
 
     <node name="my_mouse" pkg="my_dynamixel_tutorial" type="my_mouse_joy"/>
 
-    <node name="hand"  pkg="my_dynamixel_tutorial" type="calibration" output="screen" cwd="node"/> 
+    <node name="hand"  pkg="my_dynamixel_tutorial" type="calibration" output="screen"/> 
 </launch>

@@ -21,7 +21,7 @@
           output="screen"/>
     
     <node name="mouse_node" pkg="joy_mouse" type="mouse.py">
-	  <param name ="dev" value="/dev/input/mouse1"/>
+	  <param name ="dev" value="/dev/input/mouse0"/>
     </node>
 
     <node name="my_mouse" pkg="my_dynamixel_tutorial" type="my_mouse_joy"/>

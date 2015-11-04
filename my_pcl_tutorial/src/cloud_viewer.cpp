@@ -13,18 +13,21 @@
 #include <pcl/registration/icp.h>
 //pcl filter includes
 #include <pcl/filters/passthrough.h>
-#include <pcl/visualization/cloud_viewer.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/common/transforms.h>
 
 
 typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloud;
 
-pcl::visualization::CloudViewer viewer("Cloud viewer");
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_target (new pcl::PointCloud<pcl::PointXYZRGB>);
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_new (new pcl::PointCloud<pcl::PointXYZRGB>);
+pcl::visualization::PCLVisualizer viewer("Cloud viewer");
+//pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_target (new pcl::PointCloud<pcl::PointXYZRGB>);
+//pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_new (new pcl::PointCloud<pcl::PointXYZRGB>);
+bool aux=false;
 
 void cloud_cb (const PointCloud::ConstPtr& cloud)
 {
-    ROS_INFO("Obtained the point cloud for filtering");
+    //ROS_INFO("Obtained the point cloud for filtering");
+	//ROS_INFO("Size %d,%d",cloud->height,cloud->width);
     //*cloud_target = *cloud;
 
     //passthrough filter taking only point between 0.55-1.0 meters
@@ -43,11 +46,14 @@ void cloud_cb (const PointCloud::ConstPtr& cloud)
   //Execute transformation
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr transformed_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::transformPointCloud(*cloud,*transformed_cloud,transform);
-    uint8_t r = 0, g = 255, b = 0;
-    uint32_t rgb = ((uint32_t)r << 16 | (uint32_t)g << 8 | (uint32_t)b);
-    transformed_cloud->at(320,240).rgb = *reinterpret_cast<float*>(&rgb);
-    viewer.showCloud(transformed_cloud);
-
+    pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> colorHandler(cloud,255,0,0);
+    if (!aux)
+    {
+    	viewer.addPointCloud<pcl::PointXYZRGB>(cloud,colorHandler,"Red cloud");
+    	aux=true;
+    }
+    viewer.addCoordinateSystem(1.0,0);
+    viewer.spinOnce();
 }
 
 int main (int argc, char** argv)

@@ -10,10 +10,10 @@
 #define KEYCODE_D 0x42
 #define KEYCODE_Q 0x71
 
-class TeleopTurtle
+class TeleopHand
 {
 public:
-  TeleopTurtle();
+  TeleopHand();
   void keyLoop();
 
 private:
@@ -25,7 +25,7 @@ private:
 
 };
 
-TeleopTurtle::TeleopTurtle():
+TeleopHand::TeleopHand():
   code_(0)
 {
   key_pub_ = nh_.advertise<std_msgs::Int8>("/hand", 1);
@@ -45,7 +45,7 @@ void quit(int sig)
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "teleop_turtle");
-  TeleopTurtle teleop_turtle;
+  TeleopHand teleop_turtle;
 
   signal(SIGINT,quit);
 
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 }
 
 
-void TeleopTurtle::keyLoop()
+void TeleopHand::keyLoop()
 {
   char c;
   bool dirty=false;

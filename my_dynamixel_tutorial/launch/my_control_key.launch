@@ -21,7 +21,7 @@
 		second_controller"
           output="screen"/>
     
-   <node name="keyboard" pkg="my_dynamixel_tutorial" type="key_control"/>
+   <node name="keyboard" pkg="my_dynamixel_tutorial" type="key_control" output="screen" />
 <!--
     <node name="hand"  pkg="my_dynamixel_tutorial" type="hand_controller" output="screen" /> -->
 </launch>

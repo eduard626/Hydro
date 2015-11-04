@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(my_pcl_tutorial)
+project(learning_tf)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  pcl_conversions
-  pcl_ros
   roscpp
-  sensor_msgs
+  rospy
+  turtlesim
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -68,7 +68,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   sensor_msgs
+#   std_msgs  # Or other packages containing msgs
 # )
 
 ###################################
@@ -82,8 +82,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES my_pcl_tutorial
-#  CATKIN_DEPENDS pcl_conversions pcl_ros roscpp sensor_msgs
+#  LIBRARIES learning_tf
+#  CATKIN_DEPENDS roscpp rospy turtlesim
 #  DEPENDS system_lib
 )
 
@@ -97,36 +97,27 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-find_package(PCL REQUIRED)
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-find_package(VTK REQUIRED)
 
 ## Declare a cpp library
-# add_library(my_pcl_tutorial
-#   src/${PROJECT_NAME}/my_pcl_tutorial.cpp
+# add_library(learning_tf
+#   src/${PROJECT_NAME}/learning_tf.cpp
 # )
 
 ## Declare a cpp executable
-add_executable(viewer src/cloud_viewer.cpp)
-target_link_libraries(viewer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
-add_executable(dummy_node src/dummy.cpp)
-target_link_libraries(dummy_node ${PCL_LIBRARIES} ${catkin_LIBRARIES})
-add_executable(example src/example.cpp)
-target_link_libraries(example ${PCL_LIBRARIES} ${catkin_LIBRARIES})
-add_executable(ply_viewer src/ply_viewer.cpp)
-target_link_libraries(ply_viewer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
-add_executable(ibSurface src/ibSurface.cpp)
-target_link_libraries(ibSruface ${PCL_LIBRARIES} ${catkin_LIBRARIES})
-# add_executable(my_pcl_tutorial_node src/my_pcl_tutorial_node.cpp)
+add_executable(turtle_tf_broadcaster src/turtle_tf_broadcaster.cpp)
+target_link_libraries(turtle_tf_broadcaster ${catkin_LIBRARIES})
+add_executable(turtle_tf_listener src/turtle_tf_listener.cpp)
+target_link_libraries(turtle_tf_listener ${catkin_LIBRARIES})
+add_executable(frame_tf_broadcaster src/frame_tf_broadcaster.cpp)
+target_link_libraries(frame_tf_broadcaster ${catkin_LIBRARIES})
+# add_executable(learning_tf_node src/learning_tf_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(my_pcl_tutorial_node my_pcl_tutorial_generate_messages_cpp)
+# add_dependencies(learning_tf_node learning_tf_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(my_pcl_tutorial_node
+# target_link_libraries(learning_tf_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -145,7 +136,7 @@ target_link_libraries(ibSruface ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS my_pcl_tutorial my_pcl_tutorial_node
+# install(TARGETS learning_tf learning_tf_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -170,7 +161,7 @@ target_link_libraries(ibSruface ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_my_pcl_tutorial.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_learning_tf.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -109,13 +109,16 @@ find_package(VTK REQUIRED)
 # )
 
 ## Declare a cpp executable
-add_executable(example src/example.cpp)
-target_link_libraries(example ${catkin_LIBRARIES})
 add_executable(viewer src/cloud_viewer.cpp)
 target_link_libraries(viewer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 add_executable(dummy_node src/dummy.cpp)
 target_link_libraries(dummy_node ${PCL_LIBRARIES} ${catkin_LIBRARIES})
-
+add_executable(example src/example.cpp)
+target_link_libraries(example ${PCL_LIBRARIES} ${catkin_LIBRARIES})
+add_executable(ply_viewer src/ply_viewer.cpp)
+target_link_libraries(ply_viewer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
+add_executable(ibSurface src/ibSurface.cpp)
+target_link_libraries(ibSurface ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 # add_executable(my_pcl_tutorial_node src/my_pcl_tutorial_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
